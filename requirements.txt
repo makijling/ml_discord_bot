@@ -1,3 +1,4 @@
 discord.py
 transformers
 aiohttp
+python-dotenv
