@@ -1,4 +1,20 @@
 # main.py
+import os
+import openai
+from dotenv import load_dotenv
+
+load_dotenv()
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+openai.api_key = OPENAI_API_KEY
+
+def generate_openai_response(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=150
+    )
+    return response.choices[0].text.strip()
+
 import asyncio
 import logging
 from collections import defaultdict
@@ -71,6 +87,15 @@ async def on_message(message: DiscordMessage):
                 await thread.send(response)
             return
 
+        # Integrate OpenAI API for message generation
+        if message.content.startswith('!generate'):
+            prompt = message.content[len('!generate '):]
+            response = generate_openai_response(prompt)
+            await message.channel.send(response)
+            return
+
+        # Existing relevance checking and moderation code...
+        
         if should_block(guild=message.guild):
             return
 
